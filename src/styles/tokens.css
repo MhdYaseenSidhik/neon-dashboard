@@ -1,0 +1,98 @@
+/* Design tokens — direction: "Linear/Vercel-calm" enterprise. One typeface, one accent (teal-blue), semantic colours.
+   Every component reads these through the Tailwind theme (tailwind.config.js). No literals in components. */
+:root,
+[data-theme='light'] {
+  color-scheme: light;
+  --color-bg: #f6f7f9;
+  --color-surface: #ffffff;
+  --color-raised: #ffffff;
+  --color-sunken: #eef0f3;
+  --color-border: rgba(15, 23, 42, 0.12);
+  --color-border-strong: rgba(15, 23, 42, 0.24);
+  --color-fg: #0f172a;
+  --color-fg-muted: #475569;
+  --color-fg-subtle: #64748b;
+  --color-accent: #0b6e8a;
+  --color-accent-fg: #ffffff;
+  --color-accent-soft: rgba(11, 110, 138, 0.1);
+  --color-success: #15803d;
+  --color-warning: #b45309;
+  --color-danger: #b91c1c;
+  --color-info: #1d4ed8;
+  --color-success-soft: rgba(21, 128, 61, 0.12);
+  --color-warning-soft: rgba(180, 83, 9, 0.12);
+  --color-danger-soft: rgba(185, 28, 28, 0.1);
+  --color-info-soft: rgba(29, 78, 216, 0.1);
+  /* chart series palette (accent first, then neutral-ish hues) */
+  --chart-1: #0b6e8a;
+  --chart-2: #b45309;
+  --chart-3: #6d4fc2;
+  --chart-4: #15803d;
+  --chart-band: rgba(11, 110, 138, 0.16);
+  --chart-grid: rgba(15, 23, 42, 0.08);
+  --elev-1: 0 1px 2px rgba(15, 23, 42, 0.06);
+  --elev-2: 0 4px 12px rgba(15, 23, 42, 0.08);
+  --elev-3: 0 12px 32px rgba(15, 23, 42, 0.14);
+}
+
+[data-theme='dark'] {
+  color-scheme: dark;
+  --color-bg: #0b1120;
+  --color-surface: #111a2e;
+  --color-raised: #17223a;
+  --color-sunken: #0d1526;
+  --color-border: rgba(226, 232, 240, 0.12);
+  --color-border-strong: rgba(226, 232, 240, 0.26);
+  --color-fg: #e8edf5;
+  --color-fg-muted: #a6b3c7;
+  --color-fg-subtle: #8494ab;
+  --color-accent: #4cc3e0;
+  --color-accent-fg: #06202a;
+  --color-accent-soft: rgba(76, 195, 224, 0.14);
+  --color-success: #4ade80;
+  --color-warning: #fbbf24;
+  --color-danger: #f87171;
+  --color-info: #7ea6ff;
+  --color-success-soft: rgba(74, 222, 128, 0.14);
+  --color-warning-soft: rgba(251, 191, 36, 0.14);
+  --color-danger-soft: rgba(248, 113, 113, 0.14);
+  --color-info-soft: rgba(126, 166, 255, 0.14);
+  --chart-1: #4cc3e0;
+  --chart-2: #fbbf24;
+  --chart-3: #b79cff;
+  --chart-4: #4ade80;
+  --chart-band: rgba(76, 195, 224, 0.2);
+  --chart-grid: rgba(226, 232, 240, 0.1);
+  --elev-1: none;
+  --elev-2: 0 0 0 1px rgba(226, 232, 240, 0.08);
+  --elev-3: 0 0 0 1px rgba(226, 232, 240, 0.14);
+}
+
+:root {
+  --font-sans: Inter, Geist, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  /* type scale 12/14/16/20/24/32 */
+  --text-12: 0.75rem; --leading-12: 1rem;
+  --text-14: 0.875rem; --leading-14: 1.25rem;
+  --text-16: 1rem; --leading-16: 1.5rem;
+  --text-20: 1.25rem; --leading-20: 1.75rem;
+  --text-24: 1.5rem; --leading-24: 2rem;
+  --text-32: 2rem; --leading-32: 2.5rem;
+  /* 4px spacing scale */
+  --space-1: 0.25rem; --space-2: 0.5rem; --space-3: 0.75rem; --space-4: 1rem; --space-5: 1.25rem;
+  --space-6: 1.5rem; --space-8: 2rem; --space-12: 3rem; --space-16: 4rem;
+  /* control heights */
+  --ctl-32: 2rem; --ctl-36: 2.25rem; --ctl-40: 2.5rem;
+  /* radii (two + full) */
+  --radius-sm: 0.375rem; --radius-md: 0.75rem; --radius-full: 9999px;
+  /* layout */
+  --page-max: 80rem; --sidebar-w: 15rem; --measure: 40rem; --measure-xs: 20rem;
+  --chart-h: 20rem; --chart-h-sm: 14rem;
+  /* motion */
+  --motion-duration: 180ms; --motion-ease: cubic-bezier(0.2, 0, 0, 1);
+  --focus-ring: 0 0 0 2px var(--color-bg), 0 0 0 4px var(--color-accent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root { --motion-duration: 0ms; }
+}
