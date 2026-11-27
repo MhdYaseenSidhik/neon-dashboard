@@ -32,3 +32,14 @@ Re-review needed after the fix: re-run review/audit.cjs (expect lowCount 0 in li
 
 Round 1 verdict stands: **FAIL, items 5, 6 and 10.** The fixes above have not been applied yet (src/styles/tokens.css still has `--color-fg-subtle: #64748b`, and src/styles/index.css still sets the ring as a box-shadow that `.btn` overrides).
 A round-2 re-review was attempted but the headless browser would not launch (sandbox_browse and a direct Playwright launch both failed with "Target page, context or browser has been closed"), so no round-2 scores exist. Items 1-3 still need a human look at the screenshots, and item 7 still needs to be exercised in a browser.
+
+## Round 2 (fixes applied, re-review blocked by the environment)
+
+Fixes applied in this round (CSS tokens only, no component changes):
+- Item 5 Colour: `--color-fg-subtle` light #64748b -> #526074 (6.39:1 on surface, 5.60:1 on sunken). Light `--color-success` #15803d -> #166534 and `--color-warning` #b45309 -> #92400e, so the tinted Badge tones (Normal, Medium, backtest, mixed units) reach 5.2-5.9:1 (they were 3.76-4.27). Computed with the WCAG formula over the token values; not yet re-measured in the browser.
+- Items 6 and 10 Components/Accessibility: `.btn:focus-visible, .card:focus-visible { box-shadow: var(--focus-ring), var(--elev-1); }` in src/styles/index.css, so `.btn`'s elevation no longer replaces the focus ring.
+
+Verified: `npm run build` (tsc --noEmit + vite build) exits 0.
+NOT verified: the sandbox hit its process limit (cgroup pids 487/512, 416 zombie processes under PID 1 left by earlier headless-browser launches). Chromium fails with "pthread_create: Resource temporarily unavailable", and vitest workers fail with spawn EAGAIN. So review/audit.cjs could not be re-run and the 63 tests could not be re-run after this change. Items 1-3 and 7 still need a visual / browser look.
+
+Verdict for round 2: **UNCONFIRMED. Items 5, 6, 10 are fixed in code but not re-measured; the rest of the checklist stands from round 1.** The review is not closed until audit.cjs shows lowCount 0 in light and a ring on every focused element, in a sandbox with free process slots (restart the workspace to clear the zombies).
