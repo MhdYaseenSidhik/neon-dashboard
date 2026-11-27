@@ -16,6 +16,7 @@
   .btn {
     @apply inline-flex items-center justify-center gap-2 min-h-ctl min-w-ctl px-4 rounded-sm border border-border bg-surface text-sm font-medium text-fg shadow-1 transition-colors cursor-pointer;
   }
+  .btn:focus-visible, .card:focus-visible { box-shadow: var(--focus-ring), var(--elev-1); }
   .btn:hover { background: var(--color-sunken); }
   .btn:active { background: var(--color-accent-soft); }
   .btn:disabled { opacity: 0.5; cursor: not-allowed; }
