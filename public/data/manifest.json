@@ -1,0 +1,154 @@
+{
+ "schemaVersion": 3,
+ "generatedAt": "2026-11-27T14:05:00Z",
+ "asOf": "2025-12-31",
+ "plantId": "HZL_DEMO_01",
+ "plantName": "Hindustan Zinc Demo Plant 01",
+ "materialTypes": [
+  "ZSPR",
+  "ZSPN"
+ ],
+ "source": "neon:neondb via Context Flow (integration 6b098812984d26076b4cfd84)",
+ "disclaimer": "Simulated POC figure. Not actual Vedanta or Hindustan Zinc performance and not a claim of realised savings.",
+ "backcastIncluded": false,
+ "backcastNote": "No rows with is_backcast_period = Y exist in fact_material_movement_part_001..003, fact_inventory_snapshot_part_001..004, fact_purchase_order, fact_purchase_requisition or fact_goods_receipt (all counted 0 in this run). No backcast rows are included.",
+ "files": [
+  {
+   "name": "dims.json",
+   "rows": 30,
+   "generatedAt": "2026-11-27T13:51:26Z",
+   "source": {
+    "integrationId": "6b098812984d26076b4cfd84",
+    "syncId": "(query_preview, no sync: 32 rows <= 100)",
+    "assetId": null,
+    "sql": "SELECT 'PLANT' AS k, \"PLANT_ID\" AS code, \"PLANT_NAME\" AS name, \"PLANT_TYPE\" AS extra, \"REGION_LABEL\" AS extra2 FROM public.\"DIM_PLANT\" WHERE \"PLANT_ID\" = 'HZL_DEMO_01' UNION ALL SELECT 'GROUP', \"MATERIAL_GROUP\", \"MATERIAL_GROUP\", \"BASE_UOM\", '' FROM public.\"REF_MATERIAL_GROUP\" UNION ALL SELECT DISTINCT 'TYPE', \"MATERIAL_TYPE\", \"MATERIAL_TYPE\", '', '' FROM public.\"DIM_MATERIAL\" WHERE \"MATERIAL_TYPE\" IN ('ZSPR','ZSPN') UNION ALL SELECT 'CRITICALITY', \"CRITICALITY\", \"CRITICALITY\", \"SERVICE_LEVEL_PCT\"::text, '' FROM public.\"REF_CRITICALITY\" UNION ALL SELECT DISTINCT 'MOVEMENT_CLASS', \"MOVEMENT_CLASS\", \"MOVEMENT_CLASS\", '', '' FROM public.\"INVENTORY_CLASSIFICATION\" WHERE \"PLANT_ID\" = 'HZL_DEMO_01' UNION ALL SELECT DISTINCT 'INVENTORY_STATUS', \"INVENTORY_STATUS\", \"INVENTORY_STATUS\", '', '' FROM public.\"INVENTORY_CLASSIFICATION\" WHERE \"PLANT_ID\" = 'HZL_DEMO_01' UNION ALL SELECT DISTINCT 'DISCLAIMER', 'DISCLAIMER', \"DISCLAIMER\", '', '' FROM public.\"INVENTORY_KPI_MONTHLY\" UNION ALL SELECT 'ASOF', 'ASOF', to_char(max(\"AS_OF_DATE\"),'YYYY-MM-DD'), '', '' FROM public.\"INVENTORY_CLASSIFICATION\" WHERE \"PLANT_ID\" = 'HZL_DEMO_01' ORDER BY 1, 2"
+   }
+  },
+  {
+   "name": "kpis.json",
+   "rows": 1045,
+   "generatedAt": "2026-11-27T13:51:26Z",
+   "source": {
+    "integrationId": "6b098812984d26076b4cfd84",
+    "syncId": "fcfb0492-914d-4d45-b01c-19478a24ae44",
+    "assetId": "6b0988d342acd4da44495996",
+    "sql": "SELECT \"POSTING_MONTH\" AS month, \"PLANT_ID\" AS plant_id, \"KPI_CODE\" AS kpi_code, \"KPI_VALUE\" AS kpi_value, \"KPI_UOM\" AS kpi_uom, \"SCENARIO_LABEL\" AS scenario FROM public.\"INVENTORY_KPI_MONTHLY\" WHERE \"PLANT_ID\" = 'HZL_DEMO_01' ORDER BY \"POSTING_MONTH\", \"KPI_CODE\", \"SCENARIO_LABEL\""
+   }
+  },
+  {
+   "name": "inventory_summary.json",
+   "rows": 479,
+   "generatedAt": "2026-11-27T13:51:26Z",
+   "source": {
+    "integrationId": "6b098812984d26076b4cfd84",
+    "syncId": "c4869a59-681c-4287-8206-5955bbf19772",
+    "assetId": "6b0989e142acd4da44495997",
+    "sql": "SELECT ic.\"PLANT_ID\" AS plant_id, dm.\"MATERIAL_GROUP\" AS material_group, dm.\"MATERIAL_TYPE\" AS material_type, g.\"BASE_UOM\" AS uom, dm.\"CRITICALITY\" AS criticality, ic.\"MOVEMENT_CLASS\" AS movement_class, ic.\"INVENTORY_STATUS\" AS inventory_status, ic.\"ABC_CLASS\" AS abc_class, COUNT(*) AS materials, SUM(ic.\"AVAILABLE_QTY\") AS available_qty, SUM(ic.\"INVENTORY_VALUE_INR\") AS value_inr FROM public.\"INVENTORY_CLASSIFICATION\" ic JOIN public.\"DIM_MATERIAL\" dm ON dm.\"MATERIAL_ID\" = ic.\"MATERIAL_ID\" JOIN public.\"REF_MATERIAL_GROUP\" g ON g.\"MATERIAL_GROUP\" = dm.\"MATERIAL_GROUP\" WHERE ic.\"PLANT_ID\" = 'HZL_DEMO_01' AND dm.\"MATERIAL_TYPE\" IN ('ZSPR','ZSPN') GROUP BY ic.\"PLANT_ID\", dm.\"MATERIAL_GROUP\", dm.\"MATERIAL_TYPE\", g.\"BASE_UOM\", dm.\"CRITICALITY\", ic.\"MOVEMENT_CLASS\", ic.\"INVENTORY_STATUS\", ic.\"ABC_CLASS\" ORDER BY 1,2,3,4,5,6,7,8"
+   }
+  },
+  {
+   "name": "materials.json",
+   "rows": 5960,
+   "generatedAt": "2026-11-27T13:51:26Z",
+   "source": {
+    "integrationId": "6b098812984d26076b4cfd84",
+    "syncId": "6ab58c26-244a-41d9-b505-a398dbd45fbe",
+    "assetId": "6b0989ff42acd4da44495998",
+    "sql": "SELECT ic.\"MATERIAL_ID\" AS material_id, ic.\"PLANT_ID\" AS plant_id, dm.\"MATERIAL_DESCRIPTION\" AS description, dm.\"MATERIAL_GROUP\" AS material_group, dm.\"MATERIAL_TYPE\" AS material_type, g.\"BASE_UOM\" AS uom, dm.\"CRITICALITY\" AS criticality, ic.\"ABC_CLASS\" AS abc_class, ic.\"XYZ_CLASS\" AS xyz_class, ic.\"MOVEMENT_CLASS\" AS movement_class, ic.\"INVENTORY_STATUS\" AS inventory_status, SUM(ic.\"AVAILABLE_QTY\") AS available_qty, SUM(ic.\"INVENTORY_VALUE_INR\") AS value_inr, MAX(ic.\"DAYS_ON_HAND\") AS days_on_hand, MAX(ic.\"DAYS_SINCE_LAST_CONSUMPTION\") AS days_since_last_consumption, MAX(ic.\"SAFETY_STOCK_QTY\") AS safety_stock_qty, MAX(ic.\"REORDER_POINT_QTY\") AS reorder_point_qty, MAX(ic.\"MAX_STOCK_QTY\") AS max_stock_qty, MAX(ic.\"TRAILING_12M_DEMAND_QTY\") AS trailing_12m_demand_qty FROM public.\"INVENTORY_CLASSIFICATION\" ic JOIN public.\"DIM_MATERIAL\" dm ON dm.\"MATERIAL_ID\" = ic.\"MATERIAL_ID\" JOIN public.\"REF_MATERIAL_GROUP\" g ON g.\"MATERIAL_GROUP\" = dm.\"MATERIAL_GROUP\" WHERE ic.\"PLANT_ID\" = 'HZL_DEMO_01' AND dm.\"MATERIAL_TYPE\" IN ('ZSPR','ZSPN') GROUP BY ic.\"MATERIAL_ID\", ic.\"PLANT_ID\", dm.\"MATERIAL_DESCRIPTION\", dm.\"MATERIAL_GROUP\", dm.\"MATERIAL_TYPE\", g.\"BASE_UOM\", dm.\"CRITICALITY\", ic.\"ABC_CLASS\", ic.\"XYZ_CLASS\", ic.\"MOVEMENT_CLASS\", ic.\"INVENTORY_STATUS\" ORDER BY ic.\"MATERIAL_ID\""
+   }
+  },
+  {
+   "name": "reorder.json",
+   "rows": 998,
+   "generatedAt": "2026-11-27T13:51:26Z",
+   "source": {
+    "integrationId": "6b098812984d26076b4cfd84",
+    "syncId": "5d879579-62fb-4cf6-b9b7-7b6861d2996f",
+    "assetId": "6b098a1c42acd4da44495999",
+    "sql": "SELECT r.\"RECOMMENDATION_ID\" AS recommendation_id, r.\"MATERIAL_ID\" AS material_id, r.\"PLANT_ID\" AS plant_id, dm.\"MATERIAL_GROUP\" AS material_group, dm.\"MATERIAL_TYPE\" AS material_type, g.\"BASE_UOM\" AS uom, dm.\"CRITICALITY\" AS criticality, r.\"PRIORITY\" AS priority, to_char(r.\"RECOMMENDED_PR_DATE\",'YYYY-MM-DD') AS recommended_pr_date, r.\"RECOMMENDED_QTY\" AS recommended_qty, r.\"ESTIMATED_VALUE_INR\" AS estimated_value_inr, r.\"AVAILABLE_QTY\" AS available_qty, r.\"OPEN_PR_QTY\" AS open_pr_qty, r.\"OPEN_PO_QTY\" AS open_po_qty, r.\"SAFETY_STOCK_QTY\" AS safety_stock_qty, r.\"REORDER_POINT_QTY\" AS reorder_point_qty, r.\"RECOMMENDATION_REASON\" AS reason, r.\"SHUTDOWN_ID\" AS shutdown_id FROM public.\"REORDER_RECOMMENDATION\" r JOIN public.\"DIM_MATERIAL\" dm ON dm.\"MATERIAL_ID\" = r.\"MATERIAL_ID\" JOIN public.\"REF_MATERIAL_GROUP\" g ON g.\"MATERIAL_GROUP\" = dm.\"MATERIAL_GROUP\" WHERE r.\"PLANT_ID\" = 'HZL_DEMO_01' AND dm.\"MATERIAL_TYPE\" IN ('ZSPR','ZSPN') ORDER BY r.\"RECOMMENDATION_ID\""
+   }
+  },
+  {
+   "name": "plan_vs_actual.json",
+   "rows": 1014,
+   "generatedAt": "2026-11-27T13:51:26Z",
+   "source": {
+    "integrationId": "6b098812984d26076b4cfd84",
+    "syncId": "c4cb8af6-9d36-4ca3-84cb-285ef285e569",
+    "assetId": "6b098a6d42acd4da4449599a",
+    "sql": "SELECT b.\"CALENDAR_MONTH\" AS month, b.\"PLANT_ID\" AS plant_id, b.\"MATERIAL_GROUP\" AS material_group, b.\"MATERIAL_TYPE\" AS material_type, g.\"BASE_UOM\" AS uom, b.\"SHUTDOWN_DRIVEN\" AS shutdown_driven, b.\"PLAN_VALUE_INR\" AS plan_value_inr, b.\"ACTUAL_PO_VALUE_INR\" AS actual_po_value_inr, b.\"ACTUAL_GR_VALUE_INR\" AS actual_gr_value_inr, b.\"VARIANCE_INR\" AS variance_inr, CASE WHEN b.\"PLAN_VALUE_INR\" = 0 THEN NULL ELSE ROUND(b.\"VARIANCE_INR\" / b.\"PLAN_VALUE_INR\" * 100, 2) END AS variance_pct FROM public.\"BUSINESS_PLAN_VS_ACTUAL\" b JOIN public.\"REF_MATERIAL_GROUP\" g ON g.\"MATERIAL_GROUP\" = b.\"MATERIAL_GROUP\" WHERE b.\"PLANT_ID\" = 'HZL_DEMO_01' AND b.\"MATERIAL_TYPE\" IN ('ZSPR','ZSPN') ORDER BY b.\"CALENDAR_MONTH\", b.\"MATERIAL_GROUP\", b.\"MATERIAL_TYPE\", b.\"SHUTDOWN_DRIVEN\""
+   }
+  },
+  {
+   "name": "forecast_holdout.json",
+   "rows": 24000,
+   "generatedAt": "2026-11-27T14:05:00Z",
+   "source": {
+    "integrationId": "6b098812984d26076b4cfd84",
+    "syncId": "ff8eb5c2-107b-413c-9e1c-0303d516b542",
+    "assetId": "6b098bd942acd4da4449599b",
+    "sql": "WITH mv AS (SELECT \"MATERIAL_ID\" AS material_id, \"POSTING_DATE\" AS posting_date, \"MOVEMENT_TYPE\" AS movement_type, \"QUANTITY\" AS quantity FROM public.\"FACT_MATERIAL_MOVEMENT_PART_001\" WHERE \"PLANT_ID\" = 'HZL_DEMO_01' AND \"MOVEMENT_TYPE\" IN ('261','262') UNION ALL SELECT \"MATERIAL_ID\", \"POSTING_DATE\", \"MOVEMENT_TYPE\", \"QUANTITY\" FROM public.\"FACT_MATERIAL_MOVEMENT_PART_002\" WHERE \"PLANT_ID\" = 'HZL_DEMO_01' AND \"MOVEMENT_TYPE\" IN ('261','262') UNION ALL SELECT \"MATERIAL_ID\", \"POSTING_DATE\", \"MOVEMENT_TYPE\", \"QUANTITY\" FROM public.\"FACT_MATERIAL_MOVEMENT_PART_003\" WHERE \"PLANT_ID\" = 'HZL_DEMO_01' AND \"MOVEMENT_TYPE\" IN ('261','262')), cons AS (SELECT mv.material_id, date_trunc('month', mv.posting_date)::date AS m, SUM(CASE WHEN mv.movement_type = '261' THEN mv.quantity ELSE -mv.quantity END) AS q FROM mv JOIN public.\"DIM_MATERIAL\" dm ON dm.\"MATERIAL_ID\" = mv.material_id WHERE dm.\"MATERIAL_TYPE\" IN ('ZSPR','ZSPN') AND mv.posting_date >= DATE '2022-01-01' AND mv.posting_date <= DATE '2025-12-31' GROUP BY 1, 2), series AS (SELECT DISTINCT material_id FROM cons), months AS (SELECT generate_series(DATE '2022-01-01', DATE '2025-12-01', INTERVAL '1 month')::date AS m), maint AS (SELECT fr.\"MATERIAL_ID\" AS material_id, to_date(fr.\"PLANNED_MONTH\", 'YYYY-MM') AS m, SUM(fr.\"REQUIRED_QTY\") AS q FROM public.\"FACT_MAINTENANCE_REQUIREMENT\" fr JOIN public.\"DIM_MAINTENANCE_ORDER\" mo ON mo.\"MAINTENANCE_ORDER_ID\" = fr.\"MAINTENANCE_ORDER_ID\" JOIN public.\"DIM_EQUIPMENT\" eq ON eq.\"EQUIPMENT_ID\" = mo.\"EQUIPMENT_ID\" WHERE eq.\"PLANT_ID\" = 'HZL_DEMO_01' GROUP BY 1, 2), shut AS (SELECT fs.\"MATERIAL_ID\" AS material_id, date_trunc('month', se.\"PLANNED_START_DATE\")::date AS m, SUM(fs.\"REQUIRED_QTY\") AS q FROM public.\"FACT_SHUTDOWN_SCHEDULE\" fs JOIN public.\"DIM_SHUTDOWN_EVENT\" se ON se.\"SHUTDOWN_ID\" = fs.\"SHUTDOWN_ID\" WHERE se.\"PLANT_ID\" = 'HZL_DEMO_01' GROUP BY 1, 2), shm AS (SELECT DISTINCT mo2.m FROM months mo2 JOIN public.\"DIM_SHUTDOWN_EVENT\" se ON se.\"PLANT_ID\" = 'HZL_DEMO_01' AND se.\"PLANNED_START_DATE\" < (mo2.m + INTERVAL '1 month') AND se.\"PLANNED_END_DATE\" >= mo2.m), seas AS (SELECT \"MATERIAL_GROUP\" AS material_group, \"CALENDAR_MONTH\" AS cm, \"SEASON_FACTOR\" AS sf FROM public.\"SEASONALITY_MONTHLY\" WHERE \"PLANT_ID\" = 'HZL_DEMO_01') SELECT s.material_id || '|HZL_DEMO_01' AS series_id, to_char(mo.m, 'YYYY-MM-DD') AS month_start, COALESCE(c.q, 0) AS net_consumption_qty, dmm.\"MATERIAL_TYPE\" AS material_type, COALESCE(ma.q, 0) AS planned_maint_qty, COALESCE(sh.q, 0) AS planned_shutdown_qty, CASE WHEN sm.m IS NULL THEN 0 ELSE 1 END AS plant_shutdown_flag, COALESCE(se2.sf, 1) AS season_index, extract(month from mo.m)::int AS month_of_year FROM series s CROSS JOIN months mo JOIN public.\"DIM_MATERIAL\" dmm ON dmm.\"MATERIAL_ID\" = s.material_id LEFT JOIN cons c ON c.material_id = s.material_id AND c.m = mo.m LEFT JOIN maint ma ON ma.material_id = s.material_id AND ma.m = mo.m LEFT JOIN shut sh ON sh.material_id = s.material_id AND sh.m = mo.m LEFT JOIN shm sm ON sm.m = mo.m LEFT JOIN seas se2 ON se2.material_group = dmm.\"MATERIAL_GROUP\" AND se2.cm = to_char(mo.m, 'YYYY-MM') ORDER BY 1, 2",
+    "experimentId": "6b098be1984d26076b4cfdf2",
+    "download": "forecast-evaluation"
+   }
+  },
+  {
+   "name": "forecast.json",
+   "rows": 24000,
+   "generatedAt": "2026-11-27T14:05:00Z",
+   "source": {
+    "integrationId": "6b098812984d26076b4cfd84",
+    "syncId": "ff8eb5c2-107b-413c-9e1c-0303d516b542",
+    "assetId": "6b098c8e984d26076b4cfdfa",
+    "sql": "WITH mv AS (SELECT \"MATERIAL_ID\" AS material_id, \"POSTING_DATE\" AS posting_date, \"MOVEMENT_TYPE\" AS movement_type, \"QUANTITY\" AS quantity FROM public.\"FACT_MATERIAL_MOVEMENT_PART_001\" WHERE \"PLANT_ID\" = 'HZL_DEMO_01' AND \"MOVEMENT_TYPE\" IN ('261','262') UNION ALL SELECT \"MATERIAL_ID\", \"POSTING_DATE\", \"MOVEMENT_TYPE\", \"QUANTITY\" FROM public.\"FACT_MATERIAL_MOVEMENT_PART_002\" WHERE \"PLANT_ID\" = 'HZL_DEMO_01' AND \"MOVEMENT_TYPE\" IN ('261','262') UNION ALL SELECT \"MATERIAL_ID\", \"POSTING_DATE\", \"MOVEMENT_TYPE\", \"QUANTITY\" FROM public.\"FACT_MATERIAL_MOVEMENT_PART_003\" WHERE \"PLANT_ID\" = 'HZL_DEMO_01' AND \"MOVEMENT_TYPE\" IN ('261','262')), cons AS (SELECT mv.material_id, date_trunc('month', mv.posting_date)::date AS m, SUM(CASE WHEN mv.movement_type = '261' THEN mv.quantity ELSE -mv.quantity END) AS q FROM mv JOIN public.\"DIM_MATERIAL\" dm ON dm.\"MATERIAL_ID\" = mv.material_id WHERE dm.\"MATERIAL_TYPE\" IN ('ZSPR','ZSPN') AND mv.posting_date >= DATE '2022-01-01' AND mv.posting_date <= DATE '2025-12-31' GROUP BY 1, 2), series AS (SELECT DISTINCT material_id FROM cons), months AS (SELECT generate_series(DATE '2022-01-01', DATE '2025-12-01', INTERVAL '1 month')::date AS m), maint AS (SELECT fr.\"MATERIAL_ID\" AS material_id, to_date(fr.\"PLANNED_MONTH\", 'YYYY-MM') AS m, SUM(fr.\"REQUIRED_QTY\") AS q FROM public.\"FACT_MAINTENANCE_REQUIREMENT\" fr JOIN public.\"DIM_MAINTENANCE_ORDER\" mo ON mo.\"MAINTENANCE_ORDER_ID\" = fr.\"MAINTENANCE_ORDER_ID\" JOIN public.\"DIM_EQUIPMENT\" eq ON eq.\"EQUIPMENT_ID\" = mo.\"EQUIPMENT_ID\" WHERE eq.\"PLANT_ID\" = 'HZL_DEMO_01' GROUP BY 1, 2), shut AS (SELECT fs.\"MATERIAL_ID\" AS material_id, date_trunc('month', se.\"PLANNED_START_DATE\")::date AS m, SUM(fs.\"REQUIRED_QTY\") AS q FROM public.\"FACT_SHUTDOWN_SCHEDULE\" fs JOIN public.\"DIM_SHUTDOWN_EVENT\" se ON se.\"SHUTDOWN_ID\" = fs.\"SHUTDOWN_ID\" WHERE se.\"PLANT_ID\" = 'HZL_DEMO_01' GROUP BY 1, 2), shm AS (SELECT DISTINCT mo2.m FROM months mo2 JOIN public.\"DIM_SHUTDOWN_EVENT\" se ON se.\"PLANT_ID\" = 'HZL_DEMO_01' AND se.\"PLANNED_START_DATE\" < (mo2.m + INTERVAL '1 month') AND se.\"PLANNED_END_DATE\" >= mo2.m), seas AS (SELECT \"MATERIAL_GROUP\" AS material_group, \"CALENDAR_MONTH\" AS cm, \"SEASON_FACTOR\" AS sf FROM public.\"SEASONALITY_MONTHLY\" WHERE \"PLANT_ID\" = 'HZL_DEMO_01') SELECT s.material_id || '|HZL_DEMO_01' AS series_id, to_char(mo.m, 'YYYY-MM-DD') AS month_start, COALESCE(c.q, 0) AS net_consumption_qty, dmm.\"MATERIAL_TYPE\" AS material_type, COALESCE(ma.q, 0) AS planned_maint_qty, COALESCE(sh.q, 0) AS planned_shutdown_qty, CASE WHEN sm.m IS NULL THEN 0 ELSE 1 END AS plant_shutdown_flag, COALESCE(se2.sf, 1) AS season_index, extract(month from mo.m)::int AS month_of_year FROM series s CROSS JOIN months mo JOIN public.\"DIM_MATERIAL\" dmm ON dmm.\"MATERIAL_ID\" = s.material_id LEFT JOIN cons c ON c.material_id = s.material_id AND c.m = mo.m LEFT JOIN maint ma ON ma.material_id = s.material_id AND ma.m = mo.m LEFT JOIN shut sh ON sh.material_id = s.material_id AND sh.m = mo.m LEFT JOIN shm sm ON sm.m = mo.m LEFT JOIN seas se2 ON se2.material_group = dmm.\"MATERIAL_GROUP\" AND se2.cm = to_char(mo.m, 'YYYY-MM') ORDER BY 1, 2",
+    "experimentId": "6b098be1984d26076b4cfdf2",
+    "trainingAssetId": "6b098bd942acd4da4449599b"
+   }
+  }
+ ],
+ "forecast": {
+  "experimentId": "6b098be1984d26076b4cfdf2",
+  "experimentCreatedAt": "2026-11-27T13:55:45.984Z",
+  "problemType": "time_series",
+  "predictionLength": 12,
+  "seriesCount": 5948,
+  "bestModel": "WeightedEnsemble",
+  "metric": {
+   "name": "RMSE",
+   "value": 1.540308
+  },
+  "backtestError": {
+   "mae": 0.650907,
+   "wape": 0.202783
+  },
+  "verdict": "not read from Context Flow (see verdictReasons)",
+  "verdictReasons": [
+   "Backtest WAPE 0.203 (MAE 0.651); predicted total 227135 vs actual 229034 (ratio 0.992) on 71,376 held-out rows.",
+   "Context Flow generalization verdict was not read: the get_experiment response was truncated before the generalization block, so no verdict is claimed from it.",
+   "Context Flow reports feature importance 0 for all six covariates: the ensemble relies mainly on the series history.",
+   "Intermittent demand: most series have many zero months, so per-series errors are noisy; use group or unit totals for decisions."
+  ],
+  "forecastAssetId": "6b098c8e984d26076b4cfdfa",
+  "forecastFrom": "2026-01",
+  "forecastTo": "2026-12",
+  "trainingRange": {
+   "to": "2025-12",
+   "months": 48,
+   "rows": 285504,
+   "from": "2022-01"
+  },
+  "covariateColumns": [
+   "material_type",
+   "planned_maint_qty",
+   "planned_shutdown_qty",
+   "plant_shutdown_flag",
+   "season_index",
+   "month_of_year"
+  ],
+  "preset": "fast",
+  "engine": "onprem",
+  "backtestPredictedTotal": 227134.91,
+  "backtestActualTotal": 229034.0,
+  "forecastTotalAllUnits": 243054.02
+ }
+}
