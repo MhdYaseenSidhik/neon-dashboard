@@ -1,0 +1,36 @@
+@import './tokens.css';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html { background: var(--color-bg); color: var(--color-fg); font-family: var(--font-sans); }
+  body { margin: 0; min-height: 100vh; -webkit-font-smoothing: antialiased; }
+  :focus-visible { outline: none; box-shadow: var(--focus-ring); border-radius: var(--radius-sm); }
+  ::selection { background: var(--color-accent-soft); }
+  table { border-collapse: separate; border-spacing: 0; }
+}
+
+@layer components {
+  .num { font-variant-numeric: tabular-nums; text-align: right; }
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 min-h-ctl min-w-ctl px-4 rounded-sm border border-border bg-surface text-sm font-medium text-fg shadow-1 transition-colors cursor-pointer;
+  }
+  .btn:hover { background: var(--color-sunken); }
+  .btn:active { background: var(--color-accent-soft); }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .btn-primary { background: var(--color-accent); color: var(--color-accent-fg); border-color: transparent; }
+  .btn-primary:hover { background: var(--color-accent); filter: brightness(1.08); }
+  .field {
+    @apply min-h-ctl px-3 rounded-sm border border-border bg-surface text-sm text-fg transition-colors;
+  }
+  .field:hover { border-color: var(--color-border-strong); }
+  .card { @apply bg-surface border border-border rounded-md shadow-1; }
+  .chip { @apply inline-flex items-center gap-1 px-2 rounded-full text-xs font-medium border border-border text-muted; min-height: var(--space-5); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: 0ms !important; transition-duration: 0ms !important; }
+}
+@keyframes pulse-soft { 0%, 100% { opacity: 1 } 50% { opacity: 0.55 } }
+.skeleton { background: var(--color-sunken); border-radius: var(--radius-sm); animation: pulse-soft 1.4s var(--motion-ease) infinite; }
