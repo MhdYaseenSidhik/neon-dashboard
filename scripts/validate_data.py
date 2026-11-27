@@ -8,7 +8,7 @@ d=L('dims.json'); chk([p['plantId'] for p in d['plants']]==[P],'dims lists only 
 chk(all(g.get('uom') for g in d['materialGroups']),'every materialGroup has uom')
 uom={g['code']:g['uom'] for g in d['materialGroups']}
 for f in m['files']:
-    o=L(f['name']); rows=o['rows'] if 'rows' in o else None
+    o=L(f['name']); rows=o['rows'] if 'rows' in o else o.get('series')
     if f['name']=='dims.json': continue
     chk(len(rows)==f['rows'],f"{f['name']} rows {len(rows)} == manifest")
     chk(all(r.get('plantId')==P for r in rows),f"{f['name']} plant filter")
